@@ -230,6 +230,22 @@ body::before {
     color: #ff9d9d;
 }
 
+.control-hint {
+    margin-top: 8px;
+    color: var(--accent-2);
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.control-hint.muted {
+    color: var(--muted);
+}
+
+#sidebar input:disabled + span,
+#sidebar label:has(input:disabled) {
+    color: rgba(202, 214, 234, 0.48);
+}
+
 #chart {
     position: relative;
     z-index: 1;

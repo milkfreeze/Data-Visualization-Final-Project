@@ -7,6 +7,7 @@ const gameSearchInput = document.getElementById("game-search");
 const gameSearchButton = document.getElementById("game-search-button");
 const gameSearchClear = document.getElementById("game-search-clear");
 const gameSearchStatus = document.getElementById("game-search-status");
+const angleDistStatus = document.getElementById("angle-dist-status");
 
 // Define centre of the canvas
 const centreX = width / 2;
@@ -406,6 +407,21 @@ d3.csv("data/steam_game_data_clean.csv").then(function (data) {
         highlightGame(match);
     }
 
+    function updateAngleDistributionState() {
+        const isRandom = currentAngleAttr === "random";
+        d3.selectAll("input[name='angle-dist']")
+            .property("disabled", isRandom);
+
+        if (angleDistStatus) {
+            angleDistStatus.textContent = isRandom
+                ? "Select an angle attribute to enable distribution controls."
+                : "Controls how selected values are spread around the circle.";
+            angleDistStatus.className = isRandom
+                ? "control-hint muted"
+                : "control-hint";
+        }
+    }
+
     function computeAngles(attr) {
         if (attr === "random") {
             data.forEach(d => { d.currentAngle = d.angle; });
@@ -540,6 +556,7 @@ d3.csv("data/steam_game_data_clean.csv").then(function (data) {
     };
 
     computeAngles("random");
+    updateAngleDistributionState();
     drawPriceLines(scales.log);
     drawStars(scales.log);
     const filterSection = d3.select("#sidebar").append("section");
@@ -600,6 +617,7 @@ d3.csv("data/steam_game_data_clean.csv").then(function (data) {
     });
     d3.select("#angle-select").on("change", function () {
         currentAngleAttr = this.value;
+        updateAngleDistributionState();
 
         // Hide guideline in random mode
         if (this.value === "random") {
@@ -627,6 +645,8 @@ d3.csv("data/steam_game_data_clean.csv").then(function (data) {
 
 
     d3.selectAll("input[name='angle-dist']").on("change", function () {
+        if (currentAngleAttr === "random") return;
+
         currentAngleDist = this.value;
         computeAngles(currentAngleAttr);
 
